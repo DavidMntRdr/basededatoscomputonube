@@ -114,23 +114,184 @@ db.alumnos.insertMany([
 ])
  ```
 
- # Práctica
+ # Práctica 1
 
- 1. Bases de Datos, colecciones e inserts
+ ## Cargar datos
+ [Libros.json](./data/libros.json)
 
-    - Nos conectamos con mongosh al MongoDB
-    . Crear una base de datos denominada curso
-    ```json
-    use curso
-    ```
-    
-    - Verificar que la base de datos no existe
-     ```json
-    show dbs
-    ```
+## Búsquedas. Condiciones Simples de Igualdad. Método find()
+ 1. Seleccionar todos los documentos de la colección 'libros'
 
-    - Crear una colección denominada facturas y comprobar que aparece tanto la colección como la base de dato
-     ```json
-    db.createCollection("facturas")
-    ```
+ ```json
+ db.libros.find({})
+ ```
 
+ 2. Seleccionar o mostrar todos los documentos que sean de la editorial biblio
+
+```json
+ db.libros.find({editorial:'Biblio'})
+ ```
+
+ 3. Mostrar todos los documentos que el precio sea 25
+
+```json
+ db.libros.find({precio:25})
+ ```
+
+ 4. Seleccionar todos los documentos dónde el título sea json para todos
+
+ ```json
+ db.libros.find({titulo:'JSON para todos'})
+ ```
+
+ ## Operadores de Comparación
+[Operadores de comparación](https://www.mongodb.com/docs/manual/reference/operator/query/)
+
+![Operadores de comparación](../img/Operadores_relacionales.png)
+
+1. Mostrar todos los documentos donde el precio sea mayor a 25
+
+```json
+db.libros.find({ precio: { $gt: 25 } })
+```
+
+2. Mostrar los documentos donde el precio sea 25
+```json
+db.libros.find({ precio: { $eq: 25 } })
+```
+
+3. Mostrar los documetos que cuya cantidad sea menor a 5
+
+```json
+db.libros.find({ cantidad: { $lt: 5 } })
+```
+
+4. Mostrar los documentos que pertenezcan a la editorial Biblio ó Planeta
+
+ ```json
+db.libros.find({ editorial: { $in: ['Biblio', 'Planeta'] } })
+ ```
+
+ 5. Mostrar todos los documentos de libros que cuesten 20 o 25
+
+ ```json
+db.libros.find({ precio: { $in: [20, 25] } })
+ ```
+
+ 6. Mostrar todos los documentos de libros que no cuesten 20 o 25
+ 
+```json
+db.libros.find({ precio: { $nin: [20, 25] } })
+```
+
+7. Mostrar el primer domento de libros que cuesten 20 o 25
+
+```json
+ db.libros.findOne({ precio: { $in: [20, 25] } } )
+```
+## Operadores lógicos
+[Operadores de lógicos](https://www.mongodb.com/docs/manual/reference/operator/query/)
+
+![Operadores de comparación](../img/Operadores-logicos.png)
+
+### Operador AND
+
+Dos posibles opciones de AND
+
+1. La simple, mediante condiciones separadas por comas
+
+***sintaxis***
+
+db.coleccion.find({condicion1, condicion2}) -> Con esto asume que es una ***and***
+
+2. Usando el operador $and
+
+***sintaxis***
+
+db.coleccion.find( {$and: [ {condicion1}, {condicion2} ] } )
+
+1. Mostrar todos aquellos libros que cuesten más de 25 y cuya cantidad sea inferior a 15
+
+***forma simple***
+
+```json
+db.libros.find({ precio: { $gt: 25 }, cantidad: { $lt: 15 } } )```
+
+***AND***
+
+```json
+db.libros.find( {$and: [ {precio:{$gt:25}}, {cantidad: {$lt:15}} ] } )
+```
+
+2. Mostrar todos aquellos libros que cuesten más de 25 y cuya cantidad sea inferior a 15 y id 
+
+```json
+db.libros.find({ precio: { $gt: 25 }, cantidad: { $lt: 15 }, _id:4 } )
+```
+
+```json
+db.libros.find({ precio: { $gt: 25 }, cantidad: { $lt: 15 }, _id:{$eq:4} } )
+```
+
+```json
+db.libros.find(
+    {
+      $and:[
+        {precio:{$gt:25}},
+        {cantidad: {$lt:15}}
+      ]
+    }
+)
+```
+
+### Operador OR
+
+**Sintaxis:**
+
+json
+db.libros.find({$or:[{condicion1},{condicion2}]})
+
+
+
+#### Ejercicios 
+
+1. Mostrar todos aquellos libros que cuesten más de 25 o cuya cantidad sea inferior a 15 ####
+```json
+db.libros.find({$or:[{precio:{$gt:25}},{cantidad:{$lt:15}}]})
+```
+
+### AND y OR combinados
+
+1. Mostrar los libros de la editorial biblio con precio mayor a 40 o libros de la editorial planeta con precio mayor a 30
+```json
+db.libros.find(
+{
+    $or: [
+        {$and:[{editorial:'Biblio'}, {precio:{$gt:30}}]},
+        {$and:[{editorial:{$eq:'Planeta'}}, {precio:{$gt:20}}]}
+    ]
+})
+```
+
+## Proyección de columnas
+```
+db.coleccion.find(filtro, columnas)
+```
+
+```json
+db.libros.find({}, {titulo: 1})
+```
+
+1. Seleccionar todos los documentos, mostrando el título y la editorial
+
+```json
+db.libros.find({},{titulo:1, editorial:1})
+db.libros.find({},{titulo:1, editorial:1, _id:0})
+
+```
+
+2. Seleccionar todos los documentos de la editorial planeta, mostrando solamente el título y la editorial
+
+```json
+db.libros.find({editorial:"Planeta"}, {titulo:1, editorial:1, _id:0})
+```
