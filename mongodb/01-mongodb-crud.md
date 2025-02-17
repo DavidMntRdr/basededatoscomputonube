@@ -295,3 +295,94 @@ db.libros.find({},{titulo:1, editorial:1, _id:0})
 ```json
 db.libros.find({editorial:"Planeta"}, {titulo:1, editorial:1, _id:0})
 ```
+
+
+## Operador exists(Permite saber si un campo se encuentra o no en un documento)
+
+```json
+db.libros.find(
+  {
+    editorial:{$exists:true}
+  }
+)
+
+db.libros.insertOne(
+{
+  _id:10,
+  titulo: 'Mongo en entornos gráficos',
+  editorial: 'Terra',
+  precio: 125
+}
+)
+```
+1. Mostrar todos los documentos que no contengan el campo cantidad
+
+```json
+db.libros.find(
+{
+  cantidad: {$exists: false}
+}
+)
+```
+
+## Operador Type (Permite preguntar si un determinado campo corresponde con un tipo)
+
+[Operador Type](https://www.mongodb.com/docs/manual/reference/operator/query/type/#mongodb-query-op.-type)
+
+1. Mostrar todos los documentos donde el precio sean dobles
+
+```json
+db.libros.find({precio:{$type:1}})
+
+db.libros.find({precio:{$type:16}})
+
+db.libros.insertOne({
+  _id: 13,
+  titulo: 'Python para todos',
+  editorial: 2001,
+  precio: 200,
+  cantidad: 30
+})
+
+
+db.libros.insertMany([{
+  _id: 12,
+  titulo: 'IA',
+  editorial: 'Terra',
+  precio: 125.5,
+  cantidad: 20
+}, {
+  _id: 13,
+  titulo: 'Python para todos',
+  editorial: 2001,
+  precio: 200,
+  cantidad: 30
+}])
+```
+
+2. Seleccionar los documentos donde la editorial sea de tipo entero
+```json
+db.libros.find({editorial:{$type:16}})
+db.libros.find({editorial:{$type:'int'}})
+
+```
+3. Seleccionar todos los documentos donde la editorial sea string
+```json
+db.libros.find({editorial:{$type:2}})
+db.libros.find({editorial:{$type:'string'}})
+
+```
+
+
+## Pracitca de consultas
+1. Instalar las tools de mongodb
+[DatabaseTools]
+
+2. Cargar el json empleados (Debemos estar ubicados en la carpeta donde se ecnuentra el JSON empleados)
+
+- En local: 
+  comando: 
+     mongoimport --db curso --collection empleados --file empleados.json  
+
+- Docker:
+       mongoimport --db curso --collection empleados --file empleados.json --port 27 
