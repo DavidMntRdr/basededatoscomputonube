@@ -678,7 +678,7 @@ db.productos.aggregate([{
 
 - Comprobamos que se ha creado
 ```json
-db.getCollectionNames()
+db.showCollections()
 
 Resultado:
 [
